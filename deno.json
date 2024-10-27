@@ -5,5 +5,13 @@
   "imports": {
     "@std/assert": "jsr:@std/assert@1",
     "@std/http/file-server": "jsr:@std/http/file-server@1"
+  },
+  "deploy": {
+    "project": "bd0bde1c-88b3-41f3-a944-618435c6394e",
+    "exclude": [
+      "**/node_modules"
+    ],
+    "include": [],
+    "entrypoint": "main.ts"
   }
 }
