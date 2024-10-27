@@ -1,7 +1,6 @@
 export class Leaf {
   constructor(manager) {
     this.manager = manager;
-
     this.isDead = true;
     setTimeout(() => this.spawn(), 4000 * random(4));
   }
@@ -67,6 +66,16 @@ export class Leaf {
     this.rotation.z = lerp(this.rotation.z, 0, 0.03);
     this.rotation.x = lerp(this.rotation.x, 0, 0.03);
     this.rotation.y = lerp(this.rotation.y, 0, 0.03);
+
+    //Spread leaves if bunched up
+    for (const other of this.manager.gameObjects.leaves) {
+      if (other === this || other.isDead) continue;
+
+      const distance = this.pos.dist(other.pos);
+      if (distance < 15) {
+        this.pos.add(this.pos.copy().sub(other.pos).setMag(0.2));
+      }
+    }
 
     //check if out of bounds
     if (
