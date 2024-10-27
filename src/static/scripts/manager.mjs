@@ -1,5 +1,6 @@
-import { Leaf } from "./leaf.mjs";
+import { Background } from "./background.mjs";
 import { Player } from "./player.mjs";
+import { Leaf } from "./leaf.mjs";
 
 export class Manager {
   // deno-lint-ignore no-window
@@ -10,6 +11,10 @@ export class Manager {
 
   assets = {
     background: "/images/background.jpeg",
+    tileSets: {
+      background: "/images/tiles/TX-Tileset-Grass.png",
+      foliage: "/images/tiles/TX-Plant.png",
+    },
     blower: [
       "/images/blowers/leaf_blower_red.png",
       "/images/blowers/leaf_blower_blue.png",
@@ -25,17 +30,15 @@ export class Manager {
   };
 
   gameObjects = {
+    assets: {},
     leaves: [],
-    assets: {
-      background: undefined,
-      leaves: [],
-    },
-    playerManager: undefined,
   };
 
   constructor() {}
 
   init() {
+    this.background = new Background(this);
+
     this.player = new Player(this);
     this.initWebsocket();
 
@@ -103,6 +106,8 @@ export class Manager {
   }
 
   update() {
+    this.background.draw();
+
     for (const leaf of this.gameObjects.leaves) {
       leaf.update();
       leaf.render();

@@ -6,7 +6,6 @@ const manager = new Manager();
 window.preload = () => {
   //Crawl assets
   for (const [key, value] of Object.entries(manager.assets)) {
-    console.log(key, value);
     if (Array.isArray(value)) {
       for (const asset of value) {
         loadImage(asset, (img) => {
@@ -15,6 +14,16 @@ window.preload = () => {
           }
 
           manager.gameObjects.assets[key].push(img);
+        });
+      }
+    } else if (typeof value === "object") {
+      for (const [subKey, subValue] of Object.entries(value)) {
+        loadImage(subValue, (img) => {
+          if (!manager.gameObjects.assets[key]) {
+            manager.gameObjects.assets[key] = {};
+          }
+
+          manager.gameObjects.assets[key][subKey] = img;
         });
       }
     } else {
@@ -38,18 +47,18 @@ window.setup = () => {
 
 window.draw = () => {
   background("black");
-  image(
-    manager.gameObjects.assets.background,
-    -width / 2,
-    -height / 2,
-    width,
-    height,
-    0,
-    0,
-    manager.gameObjects.assets.background.width,
-    manager.gameObjects.assets.background.height,
-    COVER
-  );
+  // image(
+  //   manager.gameObjects.background,
+  //   -width / 2,
+  //   -height / 2,
+  //   width,
+  //   height,
+  //   0,
+  //   0,
+  //   manager.gameObjects.background.width,
+  //   manager.gameObjects.background.height,
+  //   COVER
+  // );
 
   manager.update();
 };
@@ -57,4 +66,5 @@ window.draw = () => {
 window.windowResized = () => {
   //Update canvas size
   resizeCanvas(innerWidth, innerHeight);
+  manager.background.createBackground();
 };

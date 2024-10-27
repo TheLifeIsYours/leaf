@@ -1,4 +1,3 @@
-// deno-lint-ignore-file no-window
 export class Player {
   previousMousePressed = false;
 

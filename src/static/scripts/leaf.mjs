@@ -105,7 +105,7 @@ export class Leaf {
     const imgHeight = this.leafAsset.height;
     //Scaled to max 50x50
     const scale = 50 / max(imgWidth, imgHeight);
-    plane(imgWidth * scale, imgHeight * scale);
+    plane(imgWidth * scale, imgHeight * scale, 4, 4);
     pop();
   }
 }
