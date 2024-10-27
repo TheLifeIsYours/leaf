@@ -68,6 +68,7 @@ export class Leaf {
     this.rotation.x = lerp(this.rotation.x, 0, 0.03);
     this.rotation.y = lerp(this.rotation.y, 0, 0.03);
 
+    //check if out of bounds
     if (
       this.pos.x < -width / 2 - 20 ||
       this.pos.y < -height / 2 - 50 ||

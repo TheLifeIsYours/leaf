@@ -27,7 +27,7 @@ window.preload = () => {
 
 window.setup = () => {
   //console.log("Setup");
-  createCanvas(innerWidth, innerHeight, WEBGL);
+  createCanvas(width, height, WEBGL);
   background("black");
   loadFont("/fonts/Figtree/static/Figtree-Bold.ttf", (font) => {
     textFont(font);
@@ -40,10 +40,10 @@ window.draw = () => {
   background("black");
   image(
     window.manager.gameObjects.assets.background,
-    -innerWidth / 2,
-    -innerHeight / 2,
-    innerWidth,
-    innerHeight,
+    -width / 2,
+    -height / 2,
+    width,
+    height,
     0,
     0,
     window.manager.gameObjects.assets.background.width,
@@ -56,5 +56,5 @@ window.draw = () => {
 
 window.windowResized = () => {
   //Update canvas size
-  resizeCanvas(innerWidth, innerHeight);
+  resizeCanvas(width, height);
 };
