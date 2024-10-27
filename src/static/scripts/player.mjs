@@ -44,8 +44,8 @@ export class Player {
           id: this.id,
           click: mouseIsPressed,
           pos: {
-            x: round(mouseX / window.innerWidth, 3),
-            y: round(mouseY / window.innerHeight, 3),
+            x: round(mouseX / width, 3),
+            y: round(mouseY / height, 3),
           },
         },
       };
@@ -65,8 +65,8 @@ export class Player {
           id: this.id,
           click: false,
           pos: {
-            x: round(mouseX / window.innerWidth, 3),
-            y: round(mouseY / window.innerHeight, 3),
+            x: round(mouseX / width, 3),
+            y: round(mouseY / height, 3),
           },
         },
       };
@@ -86,12 +86,12 @@ export class Player {
     this.blowerRotation = this.rotateBlower(
       this.pos.x,
       this.pos.y,
-      x * window.innerWidth,
-      y * window.innerHeight
+      x * width,
+      y * height
     );
 
-    this.pos.x = x * window.innerWidth;
-    this.pos.y = y * window.innerHeight;
+    this.pos.x = x * width;
+    this.pos.y = y * height;
   }
 
   draw() {
@@ -99,11 +99,7 @@ export class Player {
 
     push();
     noStroke();
-    translate(
-      this.pos.x - window.innerWidth / 2,
-      this.pos.y - window.innerHeight / 2,
-      0
-    );
+    translate(this.pos.x - width / 2, this.pos.y - height / 2, 0);
     rotateZ(this.blowerRotation);
     texture(this.blower);
     plane(150, 150, 8);
@@ -112,8 +108,8 @@ export class Player {
     textSize(20);
     text(
       this.username ?? "Anon",
-      this.pos.x - window.innerWidth / 2 - textWidth(this.username) / 2,
-      this.pos.y - window.innerHeight / 2 + 100
+      this.pos.x - width / 2 - textWidth(this.username) / 2,
+      this.pos.y - height / 2 + 100
     );
   }
 }

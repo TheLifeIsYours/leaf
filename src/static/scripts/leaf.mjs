@@ -16,8 +16,8 @@ export class Leaf {
     this.velocity = createVector(5, 5, 5);
 
     this.pos = createVector(
-      random(-window.innerWidth / 2, window.innerWidth / 2),
-      random(-window.innerHeight / 2, window.innerHeight / 2)
+      random(-width / 2, width / 2),
+      random(-height / 2, height / 2)
     );
 
     this.impulse = createVector(random(-1, 1), random(-1, 1), 0);
@@ -29,8 +29,8 @@ export class Leaf {
     this.pos.z = 0;
 
     const mousePos = createVector(
-      x * window.innerWidth - window.innerWidth / 2,
-      y * window.innerHeight - window.innerHeight / 2
+      x * width - width / 2,
+      y * height - height / 2
     );
 
     const distance = mousePos.dist(this.pos);
@@ -53,7 +53,7 @@ export class Leaf {
 
     //add impulse
     if (mouseIsPressed) {
-      this.addImpulse(mouseX / window.innerWidth, mouseY / window.innerHeight);
+      this.addImpulse(mouseX / width, mouseY / height);
     }
 
     //add movement
@@ -69,10 +69,10 @@ export class Leaf {
     this.rotation.y = lerp(this.rotation.y, 0, 0.03);
 
     if (
-      this.pos.x < -window.innerWidth / 2 - 20 ||
-      this.pos.y < -window.innerHeight / 2 - 50 ||
-      this.pos.x > window.innerWidth / 2 + 20 ||
-      this.pos.y > window.innerHeight / 2 + 50
+      this.pos.x < -width / 2 - 20 ||
+      this.pos.y < -height / 2 - 50 ||
+      this.pos.x > width / 2 + 20 ||
+      this.pos.y > height / 2 + 50
     ) {
       if (!this.isDead) setTimeout(() => this.spawn(), 4000 * random(4));
       this.isDead = true;
