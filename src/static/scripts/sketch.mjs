@@ -56,5 +56,5 @@ window.draw = () => {
 
 window.windowResized = () => {
   //Update canvas size
-  resizeCanvas(width, height);
+  resizeCanvas(innerWidth, innerHeight);
 };
