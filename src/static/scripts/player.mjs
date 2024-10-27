@@ -111,7 +111,7 @@ export class Player {
 
     textSize(20);
     text(
-      this.username ?? "Unknown",
+      this.username ?? "Anon",
       this.pos.x - window.innerWidth / 2 - textWidth(this.username) / 2,
       this.pos.y - window.innerHeight / 2 + 100
     );

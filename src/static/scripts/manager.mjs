@@ -9,12 +9,12 @@ export class Manager {
   players = [];
 
   assets = {
-    background: "https://i.imgur.com/9m07MT8.jpeg",
+    background: "/images/background.jpeg",
     blower: ["/images/leaf_blower.png"],
     leaves: [
-      "https://i.imgur.com/hnPorWf.png",
-      "https://i.imgur.com/SxAwOSz.png",
-      "https://i.imgur.com/g9KBUR1.png",
+      "/images/leaves/leaf_1.png",
+      "/images/leaves/leaf_2.png",
+      "/images/leaves/leaf_3.png",
     ],
   };
 
