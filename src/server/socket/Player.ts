@@ -26,42 +26,11 @@ export class Player {
 
   randomUsername() {
     //Usernames of typical groundskeepers, male and female names
-    const usernames = [
-      "Hodgens the Groundskeeper",
-      "Caddyshack Fan",
-      "Carl Spackler",
-      "Danny Leafblower",
-      "Bill Roots",
-      "Sandy Shovel",
-      "Molly Mower",
-      "Alice Aerator",
-      "Randy Rake",
-      "Pamela Pruner",
-      "George Grass",
-      "Linda Lawnmower",
-      "Tommy Topdresser",
-      "Sally Sod",
-      "David Dethatcher",
-      "Betty Bunker",
-      "Frank Fairway",
-      "Wendy Water",
-      "Oscar Overseed",
-      "Mary Mulch",
-      "Charlie Compost",
-      "Jenny Jockey",
-      "Sam Seed",
-      "Nancy Nutrient",
-      "Peter Pesticide",
-      "Ella Earthworm",
-      "Roger Root",
-      "Gina Green",
-      "Timmy Turf",
-      "Sue Soil",
-      "Henry Hole",
-      "Vicky Vent",
-      "Larry Lawn",
-      "Penny Pitch",
-    ];
+    const path = Deno.cwd() + "/src/server/names.txt";
+    const names = Deno.readFileSync(path);
+    const decoder = new TextDecoder();
+    const namesString = decoder.decode(names);
+    const usernames = namesString.split("\n");
 
     //Randomly select a username from the array
     this.username = usernames[Math.floor(Math.random() * usernames.length)];
