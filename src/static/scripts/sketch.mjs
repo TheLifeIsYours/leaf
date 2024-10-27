@@ -27,7 +27,7 @@ window.preload = () => {
 
 window.setup = () => {
   //console.log("Setup");
-  createCanvas(width, height, WEBGL);
+  createCanvas(innerWidth, innerHeight, WEBGL);
   background("black");
   loadFont("/fonts/Figtree/static/Figtree-Bold.ttf", (font) => {
     textFont(font);
