@@ -2,6 +2,7 @@
 import { Manager } from "./manager.mjs";
 
 const manager = new Manager();
+let layer;
 
 window.preload = () => {
   //Crawl assets
@@ -37,6 +38,7 @@ window.preload = () => {
 window.setup = () => {
   //console.log("Setup");
   createCanvas(innerWidth, innerHeight, WEBGL);
+  layer = createFramebuffer();
   background("black");
   loadFont("/fonts/Figtree/static/Figtree-Bold.ttf", (font) => {
     textFont(font);
@@ -46,21 +48,15 @@ window.setup = () => {
 };
 
 window.draw = () => {
-  background("black");
-  // image(
-  //   manager.gameObjects.background,
-  //   -width / 2,
-  //   -height / 2,
-  //   width,
-  //   height,
-  //   0,
-  //   0,
-  //   manager.gameObjects.background.width,
-  //   manager.gameObjects.background.height,
-  //   COVER
-  // );
-
   manager.update();
+
+  layer.begin();
+  background("black");
+  manager.draw();
+  layer.end();
+
+  texture(layer);
+  plane(width, height);
 };
 
 window.windowResized = () => {

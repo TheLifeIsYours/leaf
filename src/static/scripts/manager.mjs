@@ -106,10 +106,17 @@ export class Manager {
   }
 
   update() {
-    this.background.draw();
-
     for (const leaf of this.gameObjects.leaves) {
       leaf.update();
+    }
+
+    // Update local player
+    this.player?.update(this.socket);
+  }
+
+  draw() {
+    this.background.draw();
+    for (const leaf of this.gameObjects.leaves) {
       leaf.render();
     }
 
@@ -118,8 +125,6 @@ export class Manager {
       player.draw();
     });
 
-    // Update local player
-    this.player?.update(this.socket);
     this.player?.draw();
   }
 }
