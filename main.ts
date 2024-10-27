@@ -1,10 +1,10 @@
 import { serveDir } from "jsr:@std/http@1/file-server";
 import { SocketBase } from "./src/server/socket/Base.ts";
-import { uuidV4 } from "./src/static/scripts/utils.mjs";
 
-const socketBase = new SocketBase();
+const port = 3000;
 
-Deno.serve((req) => {
+const base = new SocketBase();
+Deno.serve({ port }, (req) => {
   if (req.headers.get("upgrade") != "websocket") {
     const pathname = new URL(req.url).pathname;
 
@@ -21,7 +21,7 @@ Deno.serve((req) => {
   }
 
   const { socket, response } = Deno.upgradeWebSocket(req);
-  socketBase.addListeners(socket);
+  base.addListeners(socket);
 
   return response;
 });

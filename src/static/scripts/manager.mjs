@@ -39,7 +39,7 @@ export class Manager {
   }
 
   initWebsocket() {
-    const url = this.isLocalhost ? "ws://localhost:8000" : "wss://leaf.tliy.no";
+    const url = this.isLocalhost ? "ws://localhost:3000" : "wss://leaf.tliy.no";
     this.socket = new WebSocket(url);
 
     this.socket.onopen = () => {
