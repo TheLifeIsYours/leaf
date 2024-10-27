@@ -5,7 +5,10 @@ export class Player {
   constructor(manager, id = null, username = null, pos = null) {
     this.manager = manager;
     this.blowerRotation = atan2(mouseY - pmouseY, mouseX - pmouseX);
-    this.blower = this.manager.gameObjects.assets.blower[0];
+    this.blower =
+      this.manager.gameObjects.assets.blower[
+        floor(random(this.manager.gameObjects.assets.blower.length - 1))
+      ];
     this.username = username;
     this.id = id;
     this.pos = pos ?? {
@@ -102,7 +105,7 @@ export class Player {
     translate(this.pos.x - width / 2, this.pos.y - height / 2, 0);
     rotateZ(this.blowerRotation);
     texture(this.blower);
-    plane(150, 150, 8);
+    plane(150, 150, 10);
     pop();
 
     textSize(20);

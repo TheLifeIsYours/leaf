@@ -1,4 +1,3 @@
-// deno-lint-ignore-file no-window
 export class Leaf {
   constructor(manager) {
     this.manager = manager;
@@ -22,6 +21,7 @@ export class Leaf {
 
     this.impulse = createVector(random(-1, 1), random(-1, 1), 0);
     this.rotation = this.impulse.copy();
+    this.direction = this.rotation.heading();
   }
 
   addImpulse(x, y) {
@@ -89,8 +89,14 @@ export class Leaf {
     rotateZ(this.rotation.z);
     rotateX(this.rotation.x);
     rotateY(this.rotation.y);
+    rotate(this.direction);
     texture(this.leafAsset);
-    plane(20, 50, 8);
+
+    const imgWidth = this.leafAsset.width;
+    const imgHeight = this.leafAsset.height;
+    //Scaled to max 50x50
+    const scale = 50 / max(imgWidth, imgHeight);
+    plane(imgWidth * scale, imgHeight * scale);
     pop();
   }
 }

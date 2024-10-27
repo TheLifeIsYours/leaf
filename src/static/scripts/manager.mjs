@@ -10,11 +10,17 @@ export class Manager {
 
   assets = {
     background: "/images/background.jpeg",
-    blower: ["/images/leaf_blower.png"],
+    blower: [
+      "/images/blowers/leaf_blower_red.png",
+      "/images/blowers/leaf_blower_blue.png",
+      "/images/blowers/leaf_blower_yellow.png",
+      "/images/blowers/leaf_blower_purple.png",
+    ],
     leaves: [
       "/images/leaves/leaf_1.png",
       "/images/leaves/leaf_2.png",
       "/images/leaves/leaf_3.png",
+      "/images/leaves/leaf_4.png",
     ],
   };
 

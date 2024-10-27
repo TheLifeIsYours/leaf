@@ -1,25 +1,25 @@
 // deno-lint-ignore-file no-window
 import { Manager } from "./manager.mjs";
 
-window.manager = new Manager();
+const manager = new Manager();
 
 window.preload = () => {
   //Crawl assets
-  for (const [key, value] of Object.entries(window.manager.assets)) {
+  for (const [key, value] of Object.entries(manager.assets)) {
     console.log(key, value);
     if (Array.isArray(value)) {
       for (const asset of value) {
         loadImage(asset, (img) => {
-          if (!window.manager.gameObjects.assets[key]) {
-            window.manager.gameObjects.assets[key] = [];
+          if (!manager.gameObjects.assets[key]) {
+            manager.gameObjects.assets[key] = [];
           }
 
-          window.manager.gameObjects.assets[key].push(img);
+          manager.gameObjects.assets[key].push(img);
         });
       }
     } else {
       loadImage(value, (img) => {
-        window.manager.gameObjects.assets[key] = img;
+        manager.gameObjects.assets[key] = img;
       });
     }
   }
@@ -33,25 +33,25 @@ window.setup = () => {
     textFont(font);
   });
 
-  window.manager.init();
+  manager.init();
 };
 
 window.draw = () => {
   background("black");
   image(
-    window.manager.gameObjects.assets.background,
+    manager.gameObjects.assets.background,
     -width / 2,
     -height / 2,
     width,
     height,
     0,
     0,
-    window.manager.gameObjects.assets.background.width,
-    window.manager.gameObjects.assets.background.height,
+    manager.gameObjects.assets.background.width,
+    manager.gameObjects.assets.background.height,
     COVER
   );
 
-  window.manager.update();
+  manager.update();
 };
 
 window.windowResized = () => {
