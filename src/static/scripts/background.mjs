@@ -113,11 +113,12 @@ export class Background {
 
     if (this.isPlayerOutOfCurrentChunk(pPos, pOffset)) {
       this.updateCurrentChunk(pPos, pOffset);
-    }
+      this.deleteFarAwayChunks();
+    } else return;
+    console.log("Creating surrounding chunks");
 
     if (!this.currentChunk) return;
 
-    this.deleteFarAwayChunks();
     this.checkAndCreateSurroundingChunks(pPos, pOffset);
   }
 
@@ -214,6 +215,7 @@ export class Background {
   }
 
   deleteFarAwayChunks() {
+    if (this.chunks.length < 25) return;
     const { x: currentChunkX, y: currentChunkY } = this.currentChunk;
 
     //Delete chunks that are 5 chunks away from the current chunk
