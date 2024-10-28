@@ -4,6 +4,7 @@ export class Player {
   username: string;
   score: number = 0;
   pos: { x: number; y: number } = { x: 0, y: 0 };
+  offset: { x: number; y: number } = { x: 0, y: 0 };
 
   constructor(socket: WebSocket, id: string) {
     this.socket = socket;
@@ -17,11 +18,14 @@ export class Player {
       username: this.username,
       score: this.score,
       pos: this.pos,
+      offset: this.offset,
     };
   }
 
   updateState(data: PlayerUpdateEvent) {
+    console.log(data);
     this.pos = data.pos;
+    this.offset = data.offset;
   }
 
   randomUsername() {

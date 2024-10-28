@@ -10,8 +10,6 @@ export class Foliage {
   }
 
   init() {
-    this.foliage = createGraphics(width, height);
-
     const spriteMap = {
       largeTree: {
         x: 24,
@@ -186,14 +184,17 @@ export class Foliage {
   }
 
   createFoliage() {
-    this.foliage.clear();
-    //Place random foliage on the screen
+    const foliage = createGraphics(width, height);
+
+    //Place random foliage on the screen, from bottom to top
+    let y = 0;
+
     for (let i = 0; i < this.amount; i++) {
       const tileIndex = floor(random(this.tiles.length));
       const tile = this.tiles[tileIndex];
       const x = random(width);
-      const y = random(height);
-      this.foliage.image(
+      y += random(10, 20);
+      foliage.image(
         tile,
         x,
         y,
@@ -201,6 +202,9 @@ export class Foliage {
         tile.height * this.scale
       );
     }
+
+    this.foliage = foliage.get();
+    foliage.remove();
   }
 
   draw() {

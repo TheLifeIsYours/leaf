@@ -11,6 +11,10 @@ export class Player {
     this.username = username;
     this.id = id;
     this.pos = pos ?? {
+      x: width / 2,
+      y: height / 2,
+    };
+    this.offset = {
       x: 0,
       y: 0,
     };
@@ -20,9 +24,14 @@ export class Player {
     return {
       id: this.id,
       username: this.username,
+      click: mouseIsPressed,
       pos: {
-        x: this.pos.x,
-        y: this.pos.y,
+        x: round(this.pos.x / width, 3),
+        y: round(this.pos.y / height, 3),
+      },
+      offset: {
+        x: this.offset.x,
+        y: this.offset.y,
       },
     };
   }
@@ -39,17 +48,33 @@ export class Player {
 
     this.blowerRotation = this.rotateBlower(pmouseX, pmouseY, mouseX, mouseY);
 
-    if (mouseIsPressed || movedX || movedY) {
+    //Transform if mouse is close to edge
+    if (mouseX < 150) {
+      this.offset.x += 5;
+    } else if (mouseX > width - 150) {
+      this.offset.x -= 5;
+    }
+
+    if (mouseY < 150) {
+      this.offset.y += 5;
+    } else if (mouseY > height - 150) {
+      this.offset.y -= 5;
+    }
+
+    let movedOffset = false;
+    if (
+      mouseX < 150 ||
+      mouseX > width - 150 ||
+      mouseY < 150 ||
+      mouseY > height - 150
+    ) {
+      movedOffset = true;
+    }
+
+    if (mouseIsPressed || movedX || movedY || movedOffset) {
       const data = {
         event: "player-update",
-        data: {
-          id: this.id,
-          click: mouseIsPressed,
-          pos: {
-            x: round(mouseX / width, 3),
-            y: round(mouseY / height, 3),
-          },
-        },
+        data: this.data(),
       };
 
       if (socket.readyState === 1) {
@@ -63,14 +88,7 @@ export class Player {
     if (this.previousMousePressed && !mouseIsPressed) {
       const data = {
         event: "player-update",
-        data: {
-          id: this.id,
-          click: false,
-          pos: {
-            x: round(mouseX / width, 3),
-            y: round(mouseY / height, 3),
-          },
-        },
+        data: this.data(),
       };
 
       if (socket.readyState === 1) {
@@ -86,14 +104,17 @@ export class Player {
     const { x, y } = data.pos;
 
     this.blowerRotation = this.rotateBlower(
-      this.pos.x,
-      this.pos.y,
+      this.pos.x - this.offset.x,
+      this.pos.y - this.offset.y,
       x * width,
       y * height
     );
 
-    this.pos.x = x * width;
-    this.pos.y = y * height;
+    this.offset.x = data.offset.x;
+    this.offset.y = data.offset.y;
+
+    this.pos.x = x * width - this.offset.x;
+    this.pos.y = y * height - this.offset.y;
   }
 
   draw() {

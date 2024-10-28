@@ -37,9 +37,8 @@ export class Manager {
   constructor() {}
 
   init() {
-    this.background = new Background(this);
-
     this.player = new Player(this);
+    this.background = new Background(this);
     this.initWebsocket();
 
     for (let i = 0; i < 500; i++) {
@@ -90,7 +89,7 @@ export class Manager {
   }
 
   updateState(data) {
-    //console.log("Updating state", data);
+    console.log("Updating state", data);
     //console.log("players", this.players);
     for (const player of this.players) {
       if (player.id !== data.id) continue;
@@ -100,22 +99,32 @@ export class Manager {
 
       if (data.click) {
         const { x, y } = data.pos;
-        this.gameObjects.leaves.forEach((l) => l.addImpulse(x, y));
+        this.gameObjects.leaves.forEach((l) =>
+          l.addImpulse(x, y, player.offset.x, player.offset.y)
+        );
       }
     }
   }
-
+  offset = {
+    x: 0,
+    y: 0,
+  };
   update() {
-    for (const leaf of this.gameObjects.leaves) {
-      leaf.update();
-    }
+    this.background.update();
 
     // Update local player
     this.player?.update(this.socket);
+
+    for (const leaf of this.gameObjects.leaves) {
+      leaf.update();
+    }
   }
 
   draw() {
+    push();
+    translate(this.player.offset.x, this.player.offset.y);
     this.background.draw();
+
     for (const leaf of this.gameObjects.leaves) {
       leaf.render();
     }
@@ -125,6 +134,7 @@ export class Manager {
       player.draw();
     });
 
+    pop();
     this.player?.draw();
   }
 }
