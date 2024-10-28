@@ -2,6 +2,7 @@ export class Foliage {
   tiles = [];
   amount = 100;
   scale = 1.7;
+  edgeBuffer = 200;
 
   constructor(manager) {
     this.manager = manager;
@@ -184,7 +185,10 @@ export class Foliage {
   }
 
   createFoliage() {
-    const foliage = createGraphics(width, height);
+    const foliage = createGraphics(
+      width + this.edgeBuffer,
+      height + this.edgeBuffer
+    );
 
     //Place random foliage on the screen, from bottom to top
     let y = 0;
@@ -192,8 +196,11 @@ export class Foliage {
     for (let i = 0; i < this.amount; i++) {
       const tileIndex = floor(random(this.tiles.length));
       const tile = this.tiles[tileIndex];
-      const x = random(width);
+
+      const x = random(width - this.edgeBuffer);
       y += random(10, 20);
+      y = constrain(y, 0, height + this.edgeBuffer);
+
       foliage.image(
         tile,
         x,
@@ -205,20 +212,5 @@ export class Foliage {
 
     this.foliage = foliage.get();
     foliage.remove();
-  }
-
-  draw() {
-    image(
-      this.foliage,
-      -width / 2,
-      -height / 2,
-      width,
-      height,
-      0,
-      0,
-      this.foliage.width,
-      this.foliage.height,
-      COVER
-    );
   }
 }

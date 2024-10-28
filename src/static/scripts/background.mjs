@@ -1,26 +1,31 @@
 import { Foliage } from "./foliage.mjs";
-export class Background {
-  tiles = [];
-  chunks = [];
-  background = null;
-  tileSize = 64;
-  scale = 2;
-  chunkEdgeBuffer = max(width / 4, height / 4); // Distance from the edge to trigger chunk creation
 
+export class Background {
   constructor(manager) {
     this.manager = manager;
     this.foliage = new Foliage(this.manager);
+    this.tiles = [];
+    this.chunks = [];
+    this.background = null;
+    this.tileSize = 64;
+    this.scale = 2;
+    this.chunkEdgeBuffer = Math.max(width / 4, height / 4); // Distance from the edge to trigger chunk creation
+    this.currentChunk = null;
 
     this.init();
   }
 
-  //Split tiles
   init() {
-    const tilesX =
-      this.manager.gameObjects.assets.tileSets.background.width / this.tileSize;
-    const tilesY =
-      this.manager.gameObjects.assets.tileSets.background.height /
-      this.tileSize;
+    this.splitTiles();
+    this.createInitialChunk();
+    this.setCurrentChunk(0, 0);
+  }
+
+  splitTiles() {
+    const { width, height } =
+      this.manager.gameObjects.assets.tileSets.background;
+    const tilesX = width / this.tileSize;
+    const tilesY = height / this.tileSize;
 
     for (let x = 0; x < tilesX; x++) {
       for (let y = 0; y < tilesY; y++) {
@@ -36,40 +41,39 @@ export class Background {
           this.tileSize,
           this.tileSize
         );
-
         this.tiles.push(tile);
       }
     }
 
-    //remove the two last tiles
+    // Remove the last two tiles
     this.tiles.pop();
     this.tiles.pop();
-
-    //Create the first chunk
-    this.createChunk(0, 0);
-
-    //Set the current chunk to the center  one
-    this.currentChunk = this.chunks.find((c) => {
-      return c.x === 0 && c.y === 0;
-    });
   }
 
-  createBackground() {}
+  createInitialChunk() {
+    this.createChunk(0, 0);
+  }
 
-  //Procedural generation of background chunks
+  setCurrentChunk(x, y) {
+    this.currentChunk = this.chunks.find(
+      (chunk) => chunk.x === x && chunk.y === y
+    );
+  }
+
   createChunk(x, y) {
-    const chunk = {
-      x: x,
-      y: y,
-      image: null,
-    };
-
-    //console.log("Current chunk", this.currentChunk);
-    //console.log("Creating chunk", chunk);
-
+    const chunk = { x, y, image: null };
     const chunkImage = createGraphics(width, height);
     chunkImage.background(0);
 
+    this.fillChunkWithTiles(chunkImage);
+    this.addFoliageToChunk(chunkImage);
+
+    chunk.image = chunkImage.get();
+    chunkImage.remove();
+    this.chunks.push(chunk);
+  }
+
+  fillChunkWithTiles(chunkImage) {
     const xScale = 0.015;
     const yScale = 0.02;
 
@@ -79,7 +83,6 @@ export class Background {
           (x + this.manager.player.offset.x) * xScale,
           (y + this.manager.player.offset.y) * yScale
         );
-
         const index = Math.floor(noiseWithOffset * this.tiles.length);
         chunkImage.image(
           this.tiles[index],
@@ -90,9 +93,10 @@ export class Background {
         );
       }
     }
+  }
 
+  addFoliageToChunk(chunkImage) {
     this.foliage.createFoliage();
-
     chunkImage.image(
       this.foliage.foliage,
       0,
@@ -100,11 +104,6 @@ export class Background {
       this.foliage.foliage.width,
       this.foliage.foliage.height
     );
-
-    chunk.image = chunkImage.get();
-    chunkImage.remove();
-
-    this.chunks.push(chunk);
   }
 
   update() {
@@ -112,157 +111,104 @@ export class Background {
     const pPos = player.pos;
     const pOffset = player.offset;
 
-    //Check if player is close to the edge of the current chunk, if so update the current chunk
-    if (
+    if (this.isPlayerOutOfCurrentChunk(pPos, pOffset)) {
+      this.updateCurrentChunk(pPos, pOffset);
+    }
+
+    if (!this.currentChunk) return;
+
+    this.checkAndCreateSurroundingChunks(pPos, pOffset);
+  }
+
+  isPlayerOutOfCurrentChunk(pPos, pOffset) {
+    return (
       !this.currentChunk ||
       pPos.x - pOffset.x < this.currentChunk.x ||
       pPos.x - pOffset.x > this.currentChunk.x + width ||
       pPos.y - pOffset.y < this.currentChunk.y ||
       pPos.y - pOffset.y > this.currentChunk.y + height
-    ) {
-      //console.log("Updating current chunk");
-      //console.log("Player pos", pPos);
-      //console.log("Player offset", pOffset);
-      //console.log("Current chunk", this.currentChunk);
-      //Find the current chunk
-      const nextCurrentChunk = this.chunks.find((chunk) => {
-        return (
-          pPos.x - pOffset.x >= chunk.x &&
-          pPos.x - pOffset.x <= chunk.x + width &&
-          pPos.y - pOffset.y >= chunk.y &&
-          pPos.y - pOffset.y <= chunk.y + height
-        );
-      });
+    );
+  }
 
-      //console.log("Next current chunk", nextCurrentChunk);
+  updateCurrentChunk(pPos, pOffset) {
+    const nextCurrentChunk = this.chunks.find(
+      (chunk) =>
+        pPos.x - pOffset.x >= chunk.x &&
+        pPos.x - pOffset.x <= chunk.x + width &&
+        pPos.y - pOffset.y >= chunk.y &&
+        pPos.y - pOffset.y <= chunk.y + height
+    );
 
-      if (nextCurrentChunk) {
-        this.currentChunk = nextCurrentChunk;
-
-        //Check the new current chunk for neighboring chunks and create them if they don't exist
-        const currentChunkX = this.currentChunk.x;
-        const currentChunkY = this.currentChunk.y;
-
-        if (
-          !this.chunks.some(
-            (chunk) =>
-              chunk.x === currentChunkX - width && chunk.y === currentChunkY
-          )
-        ) {
-          //console.log("Creating chunk to the left");
-          this.createChunk(currentChunkX - width, currentChunkY);
-        }
-
-        if (
-          !this.chunks.some(
-            (chunk) =>
-              chunk.x === currentChunkX + width && chunk.y === currentChunkY
-          )
-        ) {
-          //console.log("Creating chunk to the right");
-          this.createChunk(currentChunkX + width, currentChunkY);
-        }
-
-        if (
-          !this.chunks.some(
-            (chunk) =>
-              chunk.x === currentChunkX && chunk.y === currentChunkY - height
-          )
-        ) {
-          //console.log("Creating chunk to the top");
-          this.createChunk(currentChunkX, currentChunkY - height);
-        }
-
-        if (
-          !this.chunks.some(
-            (chunk) =>
-              chunk.x === currentChunkX && chunk.y === currentChunkY + height
-          )
-        ) {
-          //console.log("Creating chunk to the bottom");
-          this.createChunk(currentChunkX, currentChunkY + height);
-        }
-      }
+    if (nextCurrentChunk) {
+      this.currentChunk = nextCurrentChunk;
+      this.createNeighboringChunks();
     }
+  }
 
-    if (!this.currentChunk) return;
+  createNeighboringChunks() {
+    const { x: currentChunkX, y: currentChunkY } = this.currentChunk;
 
-    //If player is close to the edge of the current chunk,
-    // make sure there is a chunk surrounding it, if not create them
-    const currentChunkX = this.currentChunk.x;
-    const currentChunkY = this.currentChunk.y;
+    this.createChunkIfNotExists(currentChunkX - width, currentChunkY);
+    this.createChunkIfNotExists(currentChunkX + width, currentChunkY);
+    this.createChunkIfNotExists(currentChunkX, currentChunkY - height);
+    this.createChunkIfNotExists(currentChunkX, currentChunkY + height);
+  }
 
-    // Check for neighboring chunks before creating new ones
+  createChunkIfNotExists(x, y) {
+    if (!this.chunks.some((chunk) => chunk.x === x && chunk.y === y)) {
+      this.createChunk(x, y);
+    }
+  }
+
+  checkAndCreateSurroundingChunks(pPos, pOffset) {
+    const { x: currentChunkX, y: currentChunkY } = this.currentChunk;
+
     if (pPos.x - pOffset.x < currentChunkX + this.chunkEdgeBuffer) {
-      if (
-        !this.chunks.some(
-          (chunk) =>
-            chunk.x === currentChunkX - width && chunk.y === currentChunkY
-        )
-      ) {
-        //console.log("Creating chunk to the left");
-        this.createChunk(currentChunkX - width, currentChunkY);
-
-        //Create chunk above the new chunk
-        this.createChunk(currentChunkX - width, currentChunkY - height);
-
-        //Create chunk below the new chunk
-        this.createChunk(currentChunkX - width, currentChunkY + height);
-      }
+      this.createChunkIfNotExists(currentChunkX - width, currentChunkY);
+      this.createChunkIfNotExists(
+        currentChunkX - width,
+        currentChunkY - height
+      );
+      this.createChunkIfNotExists(
+        currentChunkX - width,
+        currentChunkY + height
+      );
     }
 
     if (pPos.x - pOffset.x > currentChunkX + width - this.chunkEdgeBuffer) {
-      if (
-        !this.chunks.some(
-          (chunk) =>
-            chunk.x === currentChunkX + width && chunk.y === currentChunkY
-        )
-      ) {
-        //console.log("Creating chunk to the right");
-        this.createChunk(currentChunkX + width, currentChunkY);
-
-        //Create chunk above the new chunk
-        this.createChunk(currentChunkX + width, currentChunkY - height);
-
-        //Create chunk below the new chunk
-        this.createChunk(currentChunkX + width, currentChunkY + height);
-      }
+      this.createChunkIfNotExists(currentChunkX + width, currentChunkY);
+      this.createChunkIfNotExists(
+        currentChunkX + width,
+        currentChunkY - height
+      );
+      this.createChunkIfNotExists(
+        currentChunkX + width,
+        currentChunkY + height
+      );
     }
 
     if (pPos.y - pOffset.y < currentChunkY + this.chunkEdgeBuffer) {
-      if (
-        !this.chunks.some(
-          (chunk) =>
-            chunk.x === currentChunkX && chunk.y === currentChunkY - height
-        )
-      ) {
-        //console.log("Creating chunk to the top");
-        this.createChunk(currentChunkX, currentChunkY - height);
-
-        //Create chunk to the left of the new chunk
-        this.createChunk(currentChunkX - width, currentChunkY - height);
-
-        //Create chunk to the right of the new chunk
-        this.createChunk(currentChunkX + width, currentChunkY - height);
-      }
+      this.createChunkIfNotExists(currentChunkX, currentChunkY - height);
+      this.createChunkIfNotExists(
+        currentChunkX - width,
+        currentChunkY - height
+      );
+      this.createChunkIfNotExists(
+        currentChunkX + width,
+        currentChunkY - height
+      );
     }
 
     if (pPos.y - pOffset.y > currentChunkY + height - this.chunkEdgeBuffer) {
-      if (
-        !this.chunks.some(
-          (chunk) =>
-            chunk.x === currentChunkX && chunk.y === currentChunkY + height
-        )
-      ) {
-        //console.log("Creating chunk to the bottom");
-        this.createChunk(currentChunkX, currentChunkY + height);
-
-        //Create chunk to the left of the new chunk
-        this.createChunk(currentChunkX - width, currentChunkY + height);
-
-        //Create chunk to the right of the new chunk
-        this.createChunk(currentChunkX + width, currentChunkY + height);
-      }
+      this.createChunkIfNotExists(currentChunkX, currentChunkY + height);
+      this.createChunkIfNotExists(
+        currentChunkX - width,
+        currentChunkY + height
+      );
+      this.createChunkIfNotExists(
+        currentChunkX + width,
+        currentChunkY + height
+      );
     }
   }
 
