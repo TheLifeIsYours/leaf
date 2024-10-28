@@ -62,5 +62,5 @@ window.draw = () => {
 window.windowResized = () => {
   //Update canvas size
   resizeCanvas(innerWidth, innerHeight);
-  manager.background.createBackground();
+  manager.background.windowResized();
 };

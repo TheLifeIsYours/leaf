@@ -12,14 +12,23 @@ export class Background {
     this.chunkEdgeBuffer = Math.max(width / 4, height / 4); // Distance from the edge to trigger chunk creation
     this.currentChunk = null;
 
+    this.splitTiles();
     this.init();
   }
 
   init() {
-    this.splitTiles();
     this.createInitialChunk();
     this.setCurrentChunk(0, 0);
-    this.checkAndCreateSurroundingChunks(0, 0);
+    this.createAllSurroundingChunks();
+  }
+
+  //clear and start over
+  windowResized() {
+    const { x, y } = this.currentChunk;
+    this.chunks = [];
+    this.createChunk(x, y);
+    this.setCurrentChunk(x, y);
+    this.createAllSurroundingChunks();
   }
 
   splitTiles() {
@@ -159,6 +168,19 @@ export class Background {
     if (!this.chunks.some((chunk) => chunk.x === x && chunk.y === y)) {
       this.createChunk(x, y);
     }
+  }
+
+  createAllSurroundingChunks() {
+    const { x: currentChunkX, y: currentChunkY } = this.currentChunk;
+
+    this.createChunkIfNotExists(currentChunkX - width, currentChunkY);
+    this.createChunkIfNotExists(currentChunkX + width, currentChunkY);
+    this.createChunkIfNotExists(currentChunkX, currentChunkY - height);
+    this.createChunkIfNotExists(currentChunkX, currentChunkY + height);
+    this.createChunkIfNotExists(currentChunkX - width, currentChunkY - height);
+    this.createChunkIfNotExists(currentChunkX + width, currentChunkY - height);
+    this.createChunkIfNotExists(currentChunkX - width, currentChunkY + height);
+    this.createChunkIfNotExists(currentChunkX + width, currentChunkY + height);
   }
 
   checkAndCreateSurroundingChunks(pPos, pOffset) {

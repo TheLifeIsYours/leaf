@@ -67,6 +67,16 @@ export class Manager {
       if (message.event === "player-update") this.updateState(message.data);
       if (message.event === "player-leave") this.removePlayer(message.data);
     };
+
+    this.socket.onclose = () => {
+      console.log("Socket closed, reconnecting in 5 seconds");
+      setTimeout(() => this.reconnectSocket(), 5000);
+    };
+  }
+
+  reconnectSocket() {
+    this.socket.close();
+    this.initWebsocket();
   }
 
   addSelf(data) {
