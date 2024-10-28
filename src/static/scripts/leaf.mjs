@@ -99,7 +99,7 @@ export class Leaf {
     }
   }
 
-  render() {
+  draw() {
     if (this.isDead) return;
 
     push();

@@ -19,6 +19,7 @@ export class Background {
     this.splitTiles();
     this.createInitialChunk();
     this.setCurrentChunk(0, 0);
+    this.checkAndCreateSurroundingChunks(0, 0);
   }
 
   splitTiles() {
@@ -115,10 +116,8 @@ export class Background {
       this.updateCurrentChunk(pPos, pOffset);
       this.deleteFarAwayChunks();
     } else return;
-    console.log("Creating surrounding chunks");
 
     if (!this.currentChunk) return;
-
     this.checkAndCreateSurroundingChunks(pPos, pOffset);
   }
 

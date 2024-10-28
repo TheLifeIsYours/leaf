@@ -126,15 +126,22 @@ export class Manager {
     this.background.draw();
 
     for (const leaf of this.gameObjects.leaves) {
-      leaf.render();
+      leaf.draw();
     }
+    pop();
 
+    push();
+    translate(this.player.offset.x, this.player.offset.y, 50);
     // Update remote players
     this.players.forEach((player) => {
       player.draw();
     });
 
     pop();
+
+    push();
+    translate(0, 0, 50);
     this.player?.draw();
+    pop();
   }
 }

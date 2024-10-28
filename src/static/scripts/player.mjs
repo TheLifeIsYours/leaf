@@ -125,7 +125,7 @@ export class Player {
     translate(this.pos.x - width / 2, this.pos.y - height / 2, 0);
     rotateZ(this.blowerRotation);
     texture(this.blower);
-    plane(150, 150, 10);
+    plane(150, 150, 4);
     pop();
 
     textSize(20);
