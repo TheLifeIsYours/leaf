@@ -117,6 +117,7 @@ export class Background {
 
     if (!this.currentChunk) return;
 
+    this.deleteFarAwayChunks();
     this.checkAndCreateSurroundingChunks(pPos, pOffset);
   }
 
@@ -210,6 +211,19 @@ export class Background {
         currentChunkY + height
       );
     }
+  }
+
+  deleteFarAwayChunks() {
+    const { x: currentChunkX, y: currentChunkY } = this.currentChunk;
+
+    //Delete chunks that are 5 chunks away from the current chunk
+    this.chunks = this.chunks.filter(
+      (chunk) =>
+        chunk.x >= currentChunkX - width * 5 &&
+        chunk.x <= currentChunkX + width * 5 &&
+        chunk.y >= currentChunkY - height * 5 &&
+        chunk.y <= currentChunkY + height * 5
+    );
   }
 
   draw() {
