@@ -8,8 +8,9 @@ With The Leaf Is Yours, you have to toll no more! Within the comforts of your ow
 
 Simply grab a blower, and start blowing together with all your friends online!
 
-[![The Leaf Is Yours Demo](https://github.com/TheLifeIsYours/leaf/blob/main/src/static/images/the_leaf_is_yours_480.gif?raw=true)](https://leaf.tliy.no/)
-Try it out at [The Leaf Is Yours](leaf.tliy.no)
+| [![The Leaf Is Yours Demo](https://github.com/TheLifeIsYours/leaf/blob/main/src/static/images/the_leaf_is_yours_480.gif?raw=true)](https://leaf.tliy.no/) |
+|:--:| 
+| Try it out over at [The Leaf Is Yours](leaf.tliy.no) ! |
 
 ### This project was made with Deno 🦕
 
