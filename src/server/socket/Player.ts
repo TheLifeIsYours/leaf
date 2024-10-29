@@ -23,7 +23,6 @@ export class Player {
   }
 
   updateState(data: PlayerUpdateEvent) {
-    console.log(data);
     this.pos = data.pos;
     this.offset = data.offset;
   }

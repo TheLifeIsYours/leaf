@@ -10,6 +10,10 @@ export class Player {
       ];
     this.username = username;
     this.id = id;
+    this.rawPos = {
+      x: 0,
+      y: 0,
+    };
     this.pos = pos ?? {
       x: width / 2,
       y: height / 2,
@@ -18,6 +22,7 @@ export class Player {
       x: 0,
       y: 0,
     };
+    this.edgeBuffer = createVector(width / 8, height / 8, 0);
   }
 
   data() {
@@ -49,24 +54,24 @@ export class Player {
     this.blowerRotation = this.rotateBlower(pmouseX, pmouseY, mouseX, mouseY);
 
     //Transform if mouse is close to edge
-    if (mouseX < 150) {
+    if (mouseX < this.edgeBuffer.x) {
       this.offset.x += 5;
-    } else if (mouseX > width - 150) {
+    } else if (mouseX > width - this.edgeBuffer.x) {
       this.offset.x -= 5;
     }
 
-    if (mouseY < 150) {
+    if (mouseY < this.edgeBuffer.y) {
       this.offset.y += 5;
-    } else if (mouseY > height - 150) {
+    } else if (mouseY > height - this.edgeBuffer.y) {
       this.offset.y -= 5;
     }
 
     let movedOffset = false;
     if (
-      mouseX < 150 ||
-      mouseX > width - 150 ||
-      mouseY < 150 ||
-      mouseY > height - 150
+      mouseX < this.edgeBuffer.x ||
+      mouseX > width - this.edgeBuffer.x ||
+      mouseY < this.edgeBuffer.y ||
+      mouseY > height - this.edgeBuffer.y
     ) {
       movedOffset = true;
     }
@@ -112,6 +117,8 @@ export class Player {
 
     this.offset.x = data.offset.x;
     this.offset.y = data.offset.y;
+    this.rawPos.x = x;
+    this.rawPos.y = y;
 
     this.pos.x = x * width - this.offset.x;
     this.pos.y = y * height - this.offset.y;

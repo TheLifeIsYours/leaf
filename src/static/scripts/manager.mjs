@@ -1,6 +1,7 @@
 import { Background } from "./background.mjs";
 import { Player } from "./player.mjs";
 import { Leaf } from "./leaf.mjs";
+import { GUI } from "./gui.mjs";
 
 export class Manager {
   // deno-lint-ignore no-window
@@ -38,6 +39,7 @@ export class Manager {
 
   init() {
     this.player = new Player(this);
+    this.GUI = new GUI(this);
     this.background = new Background(this);
     this.initWebsocket();
 
@@ -114,6 +116,8 @@ export class Manager {
         );
       }
     }
+
+    this.GUI.update();
   }
   offset = {
     x: 0,
@@ -153,5 +157,7 @@ export class Manager {
     translate(0, 0, 50);
     this.player?.draw();
     pop();
+
+    this.GUI.draw();
   }
 }
