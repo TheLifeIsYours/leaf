@@ -22,7 +22,8 @@ export class Player {
       x: 0,
       y: 0,
     };
-    this.edgeBuffer = createVector(width / 8, height / 8, 0);
+    this.edgeSpeed = 10;
+    this.edgeBuffer = createVector(width / 7, height / 7, 0);
   }
 
   data() {
@@ -55,15 +56,15 @@ export class Player {
 
     //Transform if mouse is close to edge
     if (mouseX < this.edgeBuffer.x) {
-      this.offset.x += 5;
+      this.offset.x += this.edgeSpeed;
     } else if (mouseX > width - this.edgeBuffer.x) {
-      this.offset.x -= 5;
+      this.offset.x -= this.edgeSpeed;
     }
 
     if (mouseY < this.edgeBuffer.y) {
-      this.offset.y += 5;
+      this.offset.y += this.edgeSpeed;
     } else if (mouseY > height - this.edgeBuffer.y) {
-      this.offset.y -= 5;
+      this.offset.y -= this.edgeSpeed;
     }
 
     let movedOffset = false;

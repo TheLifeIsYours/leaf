@@ -145,7 +145,7 @@ export class Manager {
     pop();
 
     push();
-    translate(this.player.offset.x, this.player.offset.y, 50);
+    translate(this.player.offset.x, this.player.offset.y, 30);
     // Update remote players
     this.players.forEach((player) => {
       player.draw();
@@ -154,7 +154,7 @@ export class Manager {
     pop();
 
     push();
-    translate(0, 0, 50);
+    translate(0, 0, 30);
     this.player?.draw();
     pop();
 

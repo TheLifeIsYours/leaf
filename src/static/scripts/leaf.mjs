@@ -104,7 +104,7 @@ export class Leaf {
 
     push();
     noStroke();
-    translate(this.pos.x, this.pos.y, 10);
+    translate(this.pos.x, this.pos.y, 5);
     rotateZ(this.rotation.z);
     rotateX(this.rotation.x);
     rotateY(this.rotation.y);
