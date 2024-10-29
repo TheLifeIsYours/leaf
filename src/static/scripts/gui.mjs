@@ -12,30 +12,38 @@ export class GUI {
   update() {
     for (const otherPlayer of this.manager.players) {
       if (otherPlayer.id === this.manager.player.id) continue;
+
       const otherPlayerPos = createVector(
         constrain(
           otherPlayer.pos.x + this.manager.player.offset.x,
-          60,
-          width - 60
+          120,
+          width - 120
         ),
         constrain(
           otherPlayer.pos.y + this.manager.player.offset.y,
-          60,
-          height - 60
+          120,
+          height - 120
         )
       );
 
       if (
-        otherPlayerPos.x > 60 &&
-        otherPlayerPos.x < width - 60 &&
-        otherPlayerPos.y > 60 &&
-        otherPlayerPos.y < height - 60
+        otherPlayerPos.x > 120 &&
+        otherPlayerPos.x < width - 120 &&
+        otherPlayerPos.y > 120 &&
+        otherPlayerPos.y < height - 120
       ) {
         this.playerLocationHints.delete(otherPlayer.id);
         continue;
       }
 
       this.playerLocationHints.set(otherPlayer.id, otherPlayerPos);
+    }
+
+    //Remove old player hints the map
+    for (const [id, _] of this.playerLocationHints) {
+      if (!this.manager.players.some((player) => player.id === id)) {
+        this.playerLocationHints.delete(id);
+      }
     }
   }
 
