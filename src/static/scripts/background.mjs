@@ -84,8 +84,8 @@ export class Background {
   }
 
   fillChunkWithTiles(chunkImage) {
-    const xScale = 0.015;
-    const yScale = 0.02;
+    const xScale = 0.0035;
+    const yScale = 0.002;
 
     for (let x = 0; x < width; x += this.tileSize) {
       for (let y = 0; y < height; y += this.tileSize) {
@@ -93,6 +93,7 @@ export class Background {
           (x + this.manager.player.offset.x) * xScale,
           (y + this.manager.player.offset.y) * yScale
         );
+
         const index = Math.floor(noiseWithOffset * this.tiles.length);
         chunkImage.image(
           this.tiles[index],

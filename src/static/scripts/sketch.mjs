@@ -59,6 +59,12 @@ window.draw = () => {
   plane(width, height);
 };
 
+window.keyPressed = () => {
+  if (keyCode === 32) {
+    manager.player.lockView();
+  }
+};
+
 window.windowResized = () => {
   //Update canvas size
   resizeCanvas(innerWidth, innerHeight);

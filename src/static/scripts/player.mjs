@@ -3,25 +3,32 @@ export class Player {
 
   constructor(manager, id = null, username = null, pos = null) {
     this.manager = manager;
+
+    this.lockedView = false;
+
     this.blowerRotation = atan2(mouseY - pmouseY, mouseX - pmouseX);
     this.blower =
       this.manager.gameObjects.assets.blower[
         floor(random(this.manager.gameObjects.assets.blower.length - 1))
       ];
+
     this.username = username;
     this.id = id;
     this.rawPos = {
       x: 0,
       y: 0,
     };
+
     this.pos = pos ?? {
       x: width / 2,
       y: height / 2,
     };
+
     this.offset = {
       x: 0,
       y: 0,
     };
+
     this.edgeSpeed = 10;
     this.edgeBuffer = createVector(width / 7, height / 7, 0);
   }
@@ -42,6 +49,10 @@ export class Player {
     };
   }
 
+  lockView() {
+    this.lockedView = !this.lockedView;
+  }
+
   rotateBlower(prevX, prevY, x, y) {
     const rotation = atan2(y - prevY, x - prevX);
     if (abs(rotation) < 0.4) return this.blowerRotation;
@@ -54,27 +65,29 @@ export class Player {
 
     this.blowerRotation = this.rotateBlower(pmouseX, pmouseY, mouseX, mouseY);
 
-    //Transform if mouse is close to edge
-    if (mouseX < this.edgeBuffer.x) {
-      this.offset.x += this.edgeSpeed;
-    } else if (mouseX > width - this.edgeBuffer.x) {
-      this.offset.x -= this.edgeSpeed;
-    }
-
-    if (mouseY < this.edgeBuffer.y) {
-      this.offset.y += this.edgeSpeed;
-    } else if (mouseY > height - this.edgeBuffer.y) {
-      this.offset.y -= this.edgeSpeed;
-    }
-
     let movedOffset = false;
-    if (
-      mouseX < this.edgeBuffer.x ||
-      mouseX > width - this.edgeBuffer.x ||
-      mouseY < this.edgeBuffer.y ||
-      mouseY > height - this.edgeBuffer.y
-    ) {
-      movedOffset = true;
+    if (!this.lockedView) {
+      //Transform if mouse is close to edge
+      if (mouseX < this.edgeBuffer.x) {
+        this.offset.x += this.edgeSpeed;
+      } else if (mouseX > width - this.edgeBuffer.x) {
+        this.offset.x -= this.edgeSpeed;
+      }
+
+      if (mouseY < this.edgeBuffer.y) {
+        this.offset.y += this.edgeSpeed;
+      } else if (mouseY > height - this.edgeBuffer.y) {
+        this.offset.y -= this.edgeSpeed;
+      }
+
+      if (
+        mouseX < this.edgeBuffer.x ||
+        mouseX > width - this.edgeBuffer.x ||
+        mouseY < this.edgeBuffer.y ||
+        mouseY > height - this.edgeBuffer.y
+      ) {
+        movedOffset = true;
+      }
     }
 
     if (mouseIsPressed || movedX || movedY || movedOffset) {

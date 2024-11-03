@@ -2,7 +2,17 @@ export class Leaf {
   constructor(manager) {
     this.manager = manager;
     this.isDead = true;
+    this.size = { x: 50, y: 50 };
+    this.allowedOutOfBounds = 150;
     setTimeout(() => this.spawn(), 4000 * random(4));
+  }
+
+  setLeafSize() {
+    const imgWidth = this.leafAsset.width;
+    const imgHeight = this.leafAsset.height;
+    //Scaled to max 50x50
+    const scale = 50 / max(imgWidth, imgHeight);
+    this.size = { x: imgWidth * scale, y: imgHeight * scale };
   }
 
   spawn() {
@@ -11,6 +21,9 @@ export class Leaf {
       this.manager.gameObjects.assets.leaves[
         floor(random(this.manager.gameObjects.assets.leaves.length))
       ];
+
+    this.setLeafSize();
+
     this.velocity = createVector(5, 5, 5);
 
     this.pos = createVector(
@@ -89,10 +102,14 @@ export class Leaf {
 
     //check if out of bounds
     if (
-      this.pos.x + this.manager.player.offset.x < -width / 2 - 20 ||
-      this.pos.y + this.manager.player.offset.y < -height / 2 - 50 ||
-      this.pos.x + this.manager.player.offset.x > width / 2 + 20 ||
-      this.pos.y + this.manager.player.offset.y > height / 2 + 50
+      this.pos.x + this.manager.player.offset.x <
+        -width / 2 - this.size.x - this.allowedOutOfBounds ||
+      this.pos.y + this.manager.player.offset.y <
+        -height / 2 - this.size.y - this.allowedOutOfBounds ||
+      this.pos.x + this.manager.player.offset.x >
+        width / 2 + this.size.x + this.allowedOutOfBounds ||
+      this.pos.y + this.manager.player.offset.y >
+        height / 2 + this.size.y + this.allowedOutOfBounds
     ) {
       if (!this.isDead) setTimeout(() => this.spawn(), 4000 * random(4));
       this.isDead = true;
@@ -111,11 +128,7 @@ export class Leaf {
     rotate(this.direction);
     texture(this.leafAsset);
 
-    const imgWidth = this.leafAsset.width;
-    const imgHeight = this.leafAsset.height;
-    //Scaled to max 50x50
-    const scale = 50 / max(imgWidth, imgHeight);
-    plane(imgWidth * scale, imgHeight * scale, 4, 4);
+    plane(this.size.x, this.size.y, 4, 4);
     pop();
   }
 }
