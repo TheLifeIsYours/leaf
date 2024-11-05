@@ -121,7 +121,7 @@ export class Manager {
       if (data.click) {
         const { x, y } = data.pos;
         this.gameObjects.leaves.forEach((l) =>
-          l.addImpulse(x, y, player.offset.x, player.offset.y)
+          l.addCursorImpulse(x, y, player.offset.x, player.offset.y)
         );
       }
     }
