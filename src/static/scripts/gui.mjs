@@ -57,7 +57,7 @@ export class GUI {
 
       //Display dot at the edge of the screen
       ellipse(playerPos.x - width / 2, playerPos.y - height / 2, 20);
-
+      noStroke();
       pop();
     }
   }

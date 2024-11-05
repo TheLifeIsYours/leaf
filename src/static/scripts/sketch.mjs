@@ -48,6 +48,7 @@ window.setup = () => {
 };
 
 window.draw = () => {
+  noStroke();
   manager.update();
 
   layer.begin();
