@@ -1,10 +1,11 @@
+// deno-lint-ignore-file no-window
 export class Player {
   previousMousePressed = false;
 
   constructor(manager, id = null, username = null, pos = null) {
     this.manager = manager;
 
-    this.lockedView = false;
+    this.lockedView = window.localStorage.getItem("locked_viewport") ?? false;
 
     this.blowerRotation = atan2(mouseY - pmouseY, mouseX - pmouseX);
     this.blower =
@@ -51,6 +52,7 @@ export class Player {
 
   lockView() {
     this.lockedView = !this.lockedView;
+    window.localStorage.setItem("locked_viewport", this.lockedView);
   }
 
   rotateBlower(prevX, prevY, x, y) {

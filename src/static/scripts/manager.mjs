@@ -2,6 +2,7 @@ import { Background } from "./background.mjs";
 import { Player } from "./player.mjs";
 import { Leaf } from "./leaf.mjs";
 import { GUI } from "./gui.mjs";
+import { BasketManager } from "./basket/BasketManager.mjs";
 
 export class Manager {
   // deno-lint-ignore no-window
@@ -12,6 +13,7 @@ export class Manager {
 
   assets = {
     background: "/images/background.jpeg",
+    basket: "/images/basket/basket_empty.png",
     tileSets: {
       background: "/images/tiles/TX-Tileset-Grass.png",
       foliage: "/images/tiles/TX-Plant.png",
@@ -33,6 +35,7 @@ export class Manager {
   gameObjects = {
     assets: {},
     leaves: [],
+    baskets: [],
   };
 
   constructor() {}
@@ -40,13 +43,19 @@ export class Manager {
   init() {
     this.player = new Player(this);
     this.GUI = new GUI(this);
-    this.background = new Background(this);
+    this.basketManager = new BasketManager(this);
+    this.background = new Background(this, this.onChunkCreated);
+
     this.initWebsocket();
 
     for (let i = 0; i < 500; i++) {
       this.gameObjects.leaves.push(new Leaf(this));
     }
   }
+
+  onChunkCreated = (chunk) => {
+    this.basketManager.spawnBasketInChunk(chunk);
+  };
 
   initWebsocket() {
     const url = this.isLocalhost ? "ws://localhost:3000" : "wss://leaf.tliy.no";
@@ -125,6 +134,7 @@ export class Manager {
   };
   update() {
     this.background.update();
+    this.basketManager.update();
 
     // Update local player
     this.player?.update(this.socket);
@@ -137,11 +147,12 @@ export class Manager {
   draw() {
     push();
     translate(this.player.offset.x, this.player.offset.y);
-    this.background.draw();
 
-    for (const leaf of this.gameObjects.leaves) {
-      leaf.draw();
-    }
+    this.background.draw();
+    this.basketManager.draw();
+
+    this.gameObjects.leaves.forEach((leaf) => leaf.draw());
+
     pop();
 
     push();

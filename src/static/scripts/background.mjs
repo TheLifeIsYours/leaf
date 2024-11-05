@@ -1,7 +1,7 @@
 import { Foliage } from "./foliage.mjs";
 
 export class Background {
-  constructor(manager) {
+  constructor(manager, onChunkCreated) {
     this.manager = manager;
     this.foliage = new Foliage(this.manager);
     this.tiles = [];
@@ -11,6 +11,7 @@ export class Background {
     this.scale = 2;
     this.chunkEdgeBuffer = Math.max(width / 4, height / 4); // Distance from the edge to trigger chunk creation
     this.currentChunk = null;
+    this.onChunkCreated = onChunkCreated;
 
     this.splitTiles();
     this.init();
@@ -25,6 +26,10 @@ export class Background {
   //clear and start over
   windowResized() {
     const { x, y } = this.currentChunk;
+    for (const chunk of this.chunks) {
+      chunk.image.remove();
+    }
+
     this.chunks = [];
     this.createChunk(x, y);
     this.setCurrentChunk(x, y);
@@ -71,7 +76,14 @@ export class Background {
   }
 
   createChunk(x, y) {
-    const chunk = { x, y, image: null };
+    const chunk = {
+      x,
+      y,
+      width: 0,
+      height: 0,
+      image: null,
+    };
+
     const chunkImage = createGraphics(width, height);
     chunkImage.background(0);
 
@@ -79,8 +91,13 @@ export class Background {
     this.addFoliageToChunk(chunkImage);
 
     chunk.image = chunkImage.get();
+    chunk.width = chunk.image.width;
+    chunk.height = chunk.image.height;
+
     chunkImage.remove();
     this.chunks.push(chunk);
+
+    if (this.onChunkCreated !== undefined) this.onChunkCreated(chunk);
   }
 
   fillChunkWithTiles(chunkImage) {
@@ -251,6 +268,7 @@ export class Background {
   }
 
   draw() {
+    noStroke();
     for (const chunk of this.chunks) {
       image(chunk.image, chunk.x - width / 2, chunk.y - height / 2);
     }

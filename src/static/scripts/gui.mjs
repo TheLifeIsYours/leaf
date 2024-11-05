@@ -3,7 +3,6 @@ export class GUI {
     this.manager = manager;
 
     this.playerLocationHints = new Map();
-
     this.init();
   }
 

@@ -1,10 +1,26 @@
 export class Leaf {
-  constructor(manager) {
+  constructor(manager, randomSpawn = true) {
     this.manager = manager;
-    this.isDead = true;
+
+    this.pos = createVector(0, 0, 0);
     this.size = { x: 50, y: 50 };
+    this.scale = 1;
+    this.impulse = createVector(0, 0, 0);
+    this.rotation = createVector(0, 0, 0);
+    this.velocity = createVector(5, 5, 5);
+
+    this.isDead = false;
+    this.direction = 0;
     this.allowedOutOfBounds = 150;
-    setTimeout(() => this.spawn(), 4000 * random(4));
+
+    this.leafAsset =
+      this.manager.gameObjects.assets.leaves[
+        floor(random(this.manager.gameObjects.assets.leaves.length))
+      ];
+
+    this.setLeafSize();
+
+    if (randomSpawn) this.randomSpawn();
   }
 
   setLeafSize() {
@@ -15,16 +31,18 @@ export class Leaf {
     this.size = { x: imgWidth * scale, y: imgHeight * scale };
   }
 
+  randomSpawn() {
+    this.isDead = true;
+    setTimeout(() => this.spawn(), 4000 * random(4));
+  }
+
   spawn() {
     this.isDead = false;
     this.leafAsset =
       this.manager.gameObjects.assets.leaves[
         floor(random(this.manager.gameObjects.assets.leaves.length))
       ];
-
     this.setLeafSize();
-
-    this.velocity = createVector(5, 5, 5);
 
     this.pos = createVector(
       random(-width / 2, width / 2),
@@ -40,7 +58,14 @@ export class Leaf {
     this.direction = this.rotation.heading();
   }
 
-  addImpulse(x, y, offsetX = 0, offsetY = 0) {
+  addImpulse(x, y) {
+    if (this.isDead) return;
+    this.impulse.add(createVector(x, y, 0));
+    this.rotation = this.impulse.copy();
+    this.direction = this.rotation.heading();
+  }
+
+  addCursorImpulse(x, y, offsetX = 0, offsetY = 0) {
     if (this.isDead) return;
     this.pos.z = 0;
 
@@ -72,7 +97,7 @@ export class Leaf {
 
     //add impulse
     if (mouseIsPressed) {
-      this.addImpulse(
+      this.addCursorImpulse(
         mouseX / width - this.manager.player.offset.x / width,
         mouseY / height - this.manager.player.offset.y / height
       );
@@ -128,7 +153,7 @@ export class Leaf {
     rotate(this.direction);
     texture(this.leafAsset);
 
-    plane(this.size.x, this.size.y, 4, 4);
+    plane(this.size.x * this.scale, this.size.y * this.scale, 4, 4);
     pop();
   }
 }
