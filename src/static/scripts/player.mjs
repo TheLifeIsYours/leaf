@@ -7,6 +7,7 @@ export class Player {
 
     this.lockedView = window.localStorage.getItem("locked_viewport") ?? false;
 
+    this.lastWSUpdate = new Date();
     this.blowerRotation = atan2(mouseY - pmouseY, mouseX - pmouseX);
     this.blower =
       this.manager.gameObjects.assets.blower[
@@ -98,8 +99,12 @@ export class Player {
         data: this.data(),
       };
 
-      if (socket.readyState === 1) {
+      if (
+        socket.readyState === 1 &&
+        new Date() - this.lastWSUpdate > 1000 / 60
+      ) {
         socket.send(JSON.stringify(data));
+        this.lastWSUpdate = new Date();
       }
 
       this.previousMousePressed = true;
