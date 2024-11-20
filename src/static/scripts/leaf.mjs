@@ -23,6 +23,15 @@ export class Leaf {
     if (randomSpawn) this.randomSpawn();
   }
 
+  setBoundingBox() {
+    this.boundingBox = {
+      x: this.pos.x - this.size.x / 2 - this.manager.player.offset.x,
+      y: this.pos.y - this.size.y / 2 - this.manager.player.offset.y,
+      width: this.size.x,
+      height: this.size.y,
+    };
+  }
+
   setLeafSize() {
     const imgWidth = this.leafAsset.width;
     const imgHeight = this.leafAsset.height;
@@ -95,6 +104,21 @@ export class Leaf {
     if (this.isDead) return;
     this.pos.z = 0;
 
+    //check if out of bounds
+    if (
+      this.pos.x + this.manager.player.offset.x <
+        -width / 2 - this.size.x - this.allowedOutOfBounds ||
+      this.pos.y + this.manager.player.offset.y <
+        -height / 2 - this.size.y - this.allowedOutOfBounds ||
+      this.pos.x + this.manager.player.offset.x >
+        width / 2 + this.size.x + this.allowedOutOfBounds ||
+      this.pos.y + this.manager.player.offset.y >
+        height / 2 + this.size.y + this.allowedOutOfBounds
+    ) {
+      if (!this.isDead) setTimeout(() => this.spawn(), 4000 * random(4));
+      this.isDead = true;
+    }
+
     //add impulse
     if (mouseIsPressed) {
       this.addCursorImpulse(
@@ -115,6 +139,11 @@ export class Leaf {
     this.rotation.x = lerp(this.rotation.x, 0, 0.03);
     this.rotation.y = lerp(this.rotation.y, 0, 0.03);
 
+    //scale down if too big
+    if (this.scale > 1) {
+      this.scale = lerp(this.scale, 1, 0.1);
+    }
+
     //Spread leaves if bunched up
     for (const other of this.manager.gameObjects.leaves) {
       if (other === this || other.isDead) continue;
@@ -123,21 +152,6 @@ export class Leaf {
       if (distance < 15) {
         this.pos.add(this.pos.copy().sub(other.pos).setMag(0.2));
       }
-    }
-
-    //check if out of bounds
-    if (
-      this.pos.x + this.manager.player.offset.x <
-        -width / 2 - this.size.x - this.allowedOutOfBounds ||
-      this.pos.y + this.manager.player.offset.y <
-        -height / 2 - this.size.y - this.allowedOutOfBounds ||
-      this.pos.x + this.manager.player.offset.x >
-        width / 2 + this.size.x + this.allowedOutOfBounds ||
-      this.pos.y + this.manager.player.offset.y >
-        height / 2 + this.size.y + this.allowedOutOfBounds
-    ) {
-      if (!this.isDead) setTimeout(() => this.spawn(), 4000 * random(4));
-      this.isDead = true;
     }
   }
 

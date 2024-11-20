@@ -3,13 +3,19 @@ import { Leaf } from "../leaf.mjs";
 export class Basket {
   constructor(manager) {
     this.manager = manager;
-    this.leaves = [];
+    this.leavesCount = 0;
+    this.leavesIndex = [];
     this.asset = this.manager.gameObjects.assets.basket;
     this.pos = createVector(0, 0);
     this.size = createVector(100, 100);
     this.scale = createVector(1, 1);
 
     console.log("Basket created", this);
+  }
+
+  setPos(x, y) {
+    this.pos.x = x;
+    this.pos.y = y;
   }
 
   spawn() {
@@ -35,7 +41,8 @@ export class Basket {
 
       leaf.addImpulse(random(-3, 3), random(-3, 3));
 
-      this.leaves.push(leaf);
+      this.manager.gameObjects.leaves.push(leaf);
+      this.leavesIndex.push(this.manager.gameObjects.leaves.length - 1);
     }
 
     this.isFull = true;
@@ -55,8 +62,8 @@ export class Basket {
   }
 
   isColliding(leaf) {
+    if (this.isFull) return false;
     if (leaf.isDead) return false;
-
     const boundingBox = {
       x: this.pos.x - this.size.x / 2 - this.manager.player.offset.x,
       y: this.pos.y - this.size.y / 2 - this.manager.player.offset.y,
@@ -71,20 +78,24 @@ export class Basket {
       height: leaf.size.y,
     };
 
-    return (
+    const isColliding =
       boundingBox.x < leafBoundingBox.x + leafBoundingBox.width &&
       boundingBox.x + boundingBox.width > leafBoundingBox.x &&
       boundingBox.y < leafBoundingBox.y + leafBoundingBox.height &&
-      boundingBox.y + boundingBox.height > leafBoundingBox.y
-    );
+      boundingBox.y + boundingBox.height > leafBoundingBox.y;
+
+    //If the leaf is colliding with the basket, add it to the basket
+    if (isColliding) {
+      this.leavesCount++;
+      leaf.isDead = true;
+    }
+
+    return isColliding;
   }
 
   update() {
-    if (this.leaves.length > 0) {
-      this.leaves.forEach((leaf) => {
-        leaf.update();
-        leaf.scale = lerp(leaf.scale, 1, 0.1);
-      });
+    if (!this.isFull && this.leavesCount >= 100) {
+      this.animateOnFull();
     }
 
     this.scale.x = lerp(this.scale.x, 1, 0.075);
@@ -92,15 +103,20 @@ export class Basket {
   }
 
   draw() {
-    if (this.leaves.length > 0) {
-      this.leaves.forEach((leaf) => leaf.draw());
-    }
-
     if (this.isFull) return;
     push();
     translate(this.pos.x, this.pos.y, 5);
     texture(this.asset);
     plane(this.size.x * this.scale.x, this.size.y * this.scale.y);
+
+    //Display count 0 / 100 leaves
+    textSize(20);
+    fill(255);
+    text(
+      `${this.leavesCount} / 100`,
+      -textWidth(`${this.leavesCount} / 100`) / 2,
+      this.size.y / 2 + 20
+    );
     pop();
   }
 }
