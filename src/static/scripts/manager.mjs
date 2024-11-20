@@ -141,6 +141,12 @@ export class Manager {
 
     for (const leaf of this.gameObjects.leaves) {
       leaf.update();
+
+      //Remove this dead leaves if there are too many
+      if (leaf.isDead && this.gameObjects.leaves.length > 500) {
+        const index = this.gameObjects.leaves.indexOf(leaf);
+        this.gameObjects.leaves.splice(index, 1);
+      }
     }
   }
 

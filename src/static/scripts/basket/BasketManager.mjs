@@ -18,9 +18,10 @@ export class BasketManager {
 
     const basket = new Basket(this.manager);
     console.log("Basket spawned in chunk", basket, chunk);
-
-    basket.pos.x = random(chunk.x, chunk.x + chunk.width);
-    basket.pos.y = random(chunk.y, chunk.y + chunk.height);
+    basket.setPos(
+      random(chunk.x, chunk.x + chunk.width),
+      random(chunk.y, chunk.y + chunk.height)
+    );
 
     this.baskets.set(`${chunk.x}-${chunk.y}`, basket);
   }
