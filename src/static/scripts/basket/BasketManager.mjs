@@ -1,9 +1,6 @@
 import { Basket } from "./Basket.mjs";
-
 export class BasketManager {
   constructor(manager) {
-    console.log("BasketManager created");
-
     this.manager = manager;
 
     this.baskets = new Map();
@@ -17,7 +14,6 @@ export class BasketManager {
     }
 
     const basket = new Basket(this.manager);
-    console.log("Basket spawned in chunk", basket, chunk);
     basket.setPos(
       random(chunk.x, chunk.x + chunk.width),
       random(chunk.y, chunk.y + chunk.height)

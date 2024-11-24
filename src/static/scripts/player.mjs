@@ -5,7 +5,7 @@ export class Player {
   constructor(manager, id = null, username = null, pos = null) {
     this.manager = manager;
 
-    this.lockedView = window.localStorage.getItem("locked_viewport") ?? false;
+    this.lockedView = getItem("locked_viewport") ?? false;
 
     this.lastWSUpdate = new Date();
     this.blowerRotation = atan2(mouseY - pmouseY, mouseX - pmouseX);
@@ -53,7 +53,7 @@ export class Player {
 
   lockView() {
     this.lockedView = !this.lockedView;
-    window.localStorage.setItem("locked_viewport", this.lockedView);
+    storeItem("locked_viewport", this.lockedView);
   }
 
   rotateBlower(prevX, prevY, x, y) {
