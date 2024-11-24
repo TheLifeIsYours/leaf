@@ -1,4 +1,4 @@
-import { Background } from "./background.mjs";
+import { Background } from "./background/background.mjs";
 import { Player } from "./player.mjs";
 import { Leaf } from "./leaf.mjs";
 import { GUI } from "./gui.mjs";

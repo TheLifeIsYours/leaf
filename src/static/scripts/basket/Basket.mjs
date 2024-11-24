@@ -9,8 +9,6 @@ export class Basket {
     this.pos = createVector(0, 0);
     this.size = createVector(100, 100);
     this.scale = createVector(1, 1);
-
-    console.log("Basket created", this);
   }
 
   setPos(x, y) {
