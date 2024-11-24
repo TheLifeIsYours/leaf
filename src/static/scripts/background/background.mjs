@@ -153,7 +153,7 @@ export class Background {
   }
 
   fillChunkWithTiles() {
-    noiseDetail(4, 0.6);
+    noiseDetail(random(4, 8), random(0.4, 0.8));
     const xScale = 0.0035;
     const yScale = 0.002;
 
