@@ -85,8 +85,8 @@ export class Background {
     }
 
     // Remove the last two tiles
-    // this.tiles.pop();
-    // this.tiles.pop();
+    this.tiles.pop();
+    this.tiles.pop();
 
     this.tileCount = this.tiles.length;
   }
@@ -137,7 +137,7 @@ export class Background {
 
     chunkImage.begin();
     translate(-this.chunkWidth / 2, -this.chunkHeight / 2);
-    background(255);
+    background(0);
     this.fillChunkWithTiles();
     this.addFoliageToChunk(chunkImage);
     chunkImage.end();
@@ -168,7 +168,7 @@ export class Background {
         if (noiseWithOffset > 0.4) {
           index = Math.floor(random(0, 22));
         } else {
-          index = Math.floor(random(23, 47));
+          index = Math.floor(random(23, this.tileCount));
         }
 
         image(
